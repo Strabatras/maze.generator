@@ -142,42 +142,6 @@ public class MazeDFS implements MazeInterface {
         }
     }
 
-    /**
-     * Шаг в выбранном направлении
-     * TODO: Разнести логику поиска направления и перемещения
-     * @param from Начальная точка пути
-     * @return Результат выполнения
-     */
-    private boolean step( Way from ) {
-        Way to = new Way();
-        if ( from.directions.size() > 0 ) {
-            Direction reverse = Direction.reverse( from.directions.get( from.directions.size() - 1 ) );
-            if ( !to.directions.contains( reverse ) ) {
-                to.directions.add( reverse );
-            }
-        }
-
-        int i = Direction.values().length - to.directions.size();
-        while ( i > 0 ){
-            i--;
-            if ( directionChosen( from, to ) ) break;
-        }
-
-        if ( to.x == 0 ) {
-            if ( nodes.isEmpty() == false ){
-                step( nodes.poll() );
-            }
-            return false;
-        }
-        matrix.getCellMatrix( to.x, to.y ).setVisited( true );
-
-        if ( Direction.values().length > to.directions.size() ){
-            nodes.add( to );
-        }
-        removeWall( to );
-        step( to );
-        return true;
-    }
 
     /**
      * Матрица лабиринта
@@ -200,7 +164,8 @@ public class MazeDFS implements MazeInterface {
         }
         matrix.getCellMatrix( way.x, way.y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
         nodes.add( way );
-        step( way );
+
+
 
         return matrix;
     }
