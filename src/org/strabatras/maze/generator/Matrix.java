@@ -127,18 +127,6 @@ public class Matrix {
     }
 
     /**
-     * Устанавливает ячейку сетки матрицы
-     * @param x Номер ячейки по оси X
-     * @param y Номер ячейки по оси Y
-     * @param cellMatrix Ячейка
-     * @return Матрица лабиринта
-     */
-    public Matrix setCellMatrix( int x, int y, CellMatrix cellMatrix ){
-        this.cellMatrix()[ y ][ x ] = cellMatrix;
-        return this;
-    }
-
-    /**
      * Возвращает ячейку сетки матрицы
      * @param x Номер ячейки по оси X
      * @param y Номер ячейки по оси Y

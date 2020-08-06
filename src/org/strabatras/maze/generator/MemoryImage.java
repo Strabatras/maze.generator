@@ -2,7 +2,6 @@ package org.strabatras.maze.generator;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.ImageObserver;
 import java.awt.image.MemoryImageSource;
 
 /**
@@ -16,7 +15,7 @@ public class MemoryImage {
 
     private int[] imageData;
 
-    private Matrix matrix;
+    private final Matrix matrix;
 
     /**
      * @return Список данных для визуализации матрицы лабиринта
@@ -46,8 +45,8 @@ public class MemoryImage {
     }
 
     /**
-     * Матрица лабиринта
-     * @param matrix
+     * Конструктор
+     * @param matrix Матрица лабиринта
      */
     public MemoryImage( Matrix matrix ) {
         this.matrix = matrix;
@@ -67,12 +66,7 @@ public class MemoryImage {
                 MemoryImageSource imageSource = new MemoryImageSource(  matrix.maxX() + 2, matrix.maxY() + 2, imageData(), 0, matrix.maxX() + 2 );
                 imageSource.setAnimated( true );
                 Image image = Toolkit.getDefaultToolkit().createImage( imageSource );
-                g.drawImage( image, 10, 30, matrix.maxX() * 3, matrix.maxY() * 3, new ImageObserver() {
-                    @Override
-                    public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-                        return false;
-                    }
-                });
+                g.drawImage( image, 10, 30, matrix.maxX() * 3, matrix.maxY() * 3, null );
             }
         };
     }

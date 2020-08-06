@@ -6,8 +6,7 @@ package org.strabatras.maze.generator;
 public interface MazeInterface {
 
     /**
-     * Матрица лабиринта
-     * @return
+     * @return Матрица лабиринта
      */
-    public Matrix matrix();
+    Matrix matrix();
 }

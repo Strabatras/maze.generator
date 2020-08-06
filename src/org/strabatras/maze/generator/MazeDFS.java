@@ -13,7 +13,7 @@ public class MazeDFS implements MazeInterface {
     private final MazeParameters mazeParameters;
 
     /** Ячейки имеющие не посещенные направления */
-    private Queue<Way> nodes = new ConcurrentLinkedQueue<>();
+    private final Queue<Way> nodes = new ConcurrentLinkedQueue<>();
 
     /** Матрица лабиринта */
     private Matrix matrix;
@@ -24,12 +24,6 @@ public class MazeDFS implements MazeInterface {
      */
     public MazeDFS( MazeParameters mazeParameters ) {
         this.mazeParameters = mazeParameters;
-    }
-
-    private void safePrintln(String s) {
-        synchronized (System.out) {
-            System.out.println(s);
-        }
     }
 
     /**
@@ -173,8 +167,7 @@ public class MazeDFS implements MazeInterface {
     }
 
     /**
-     * Матрица лабиринта
-     * @return
+     * @return Матрица лабиринта
      */
     @Override
     public Matrix matrix() {
@@ -197,17 +190,14 @@ public class MazeDFS implements MazeInterface {
         final ThreadGroup group = new ThreadGroup("StackGroup" );
         while( !nodes.isEmpty() ){
             if ( group.activeCount() < 5 ) {
-                Thread thread = new Thread( group, new Runnable() {
-                    @Override public void run() {
-                        Way way = nodes.poll();
-                        if( null != way ) {
-                            step( way );
+                Thread thread = new Thread( group, ()-> {
+                        Way poll = nodes.poll();
+                        if( null != poll ) {
+                            step( poll );
                         }
-                    }
                 });
                 thread.start();
             }
-
         }
         while (group.activeCount() > 0 ){}
         return matrix;
@@ -266,13 +256,13 @@ public class MazeDFS implements MazeInterface {
     /**
      * Путь
      */
-    private class Way{
+    private static class Way{
         /** Координаты по оси X */
         public int x;
         /** Координаты по оси Y */
         public int y;
         /** Список задействованных направлений перемещения */
-        public List< Direction > directions;
+        public final List< Direction > directions;
 
         public Way() {
             this.directions = new ArrayList<>( Direction.values().length );

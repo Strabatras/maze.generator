@@ -8,7 +8,7 @@ public class MazeFactory {
     /**
      * Параметры лабиринта
      */
-    private MazeParameters mazeParameters = null;
+    private final MazeParameters mazeParameters;
 
     private MazeParameters mazeParameters(){
         return this.mazeParameters;
