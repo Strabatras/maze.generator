@@ -1,6 +1,7 @@
 package org.strabatras.maze.generator;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 /**
@@ -12,7 +13,7 @@ public class MazeDFS implements MazeInterface {
     private final MazeParameters mazeParameters;
 
     /** Ячейки имеющие не посещенные направления */
-    private Queue<Way> nodes = new LinkedList<>();
+    private Queue<Way> nodes = new ConcurrentLinkedQueue<>();
 
     /** Матрица лабиринта */
     private Matrix matrix;
@@ -151,7 +152,7 @@ public class MazeDFS implements MazeInterface {
      * Шаг в выбранном направлении
      * @param from Начальная точка пути
      */
-    private void step( Way from ) {
+    protected void step( Way from ) {
         Way to = new Way();
         int i = Direction.values().length - from.directions.size();
         while ( i > 0 ){
@@ -190,11 +191,25 @@ public class MazeDFS implements MazeInterface {
         if ( way.y < matrix.minY() ) {
             way.y = matrix.minY();
         }
-        //System.out.println( "WAY => " );
         matrix.getCellMatrix( way.x, way.y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
-
         step( way );
 
+        final ThreadGroup group = new ThreadGroup("StackGroup" );
+        while( !nodes.isEmpty() ){
+            if ( group.activeCount() < 5 ) {
+                Thread thread = new Thread( group, new Runnable() {
+                    @Override public void run() {
+                        Way way = nodes.poll();
+                        if( null != way ) {
+                            step( way );
+                        }
+                    }
+                });
+                thread.start();
+            }
+
+        }
+        while (group.activeCount() > 0 ){}
         return matrix;
     }
 
