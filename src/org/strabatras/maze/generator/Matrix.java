@@ -155,8 +155,8 @@ public class Matrix {
      */
     public CellMatrix getRandomCellMatrix() {
         return getCellMatrix(
-                randomInteger( 1, mazeParameters().getPlateWidth() ),
-                randomInteger( 1, mazeParameters().getPlateHeight() )
+                randomInteger( 1, maxX() ),
+                randomInteger( 1, maxY() )
         );
     }
 }

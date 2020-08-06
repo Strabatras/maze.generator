@@ -25,6 +25,12 @@ public class MazeDFS implements MazeInterface {
         this.mazeParameters = mazeParameters;
     }
 
+    private void safePrintln(String s) {
+        synchronized (System.out) {
+            System.out.println(s);
+        }
+    }
+
     /**
      * @return Параметры лабиринта
      */
@@ -103,8 +109,8 @@ public class MazeDFS implements MazeInterface {
      * @return Результат выбора
      */
     private boolean directionChosen( Way from, Way to ){
-        Direction direction = Direction.randomDirection( to.directions );
-        to.directions.add( direction );
+        Direction direction = Direction.randomDirection( from.directions );
+        from.directions.add( direction );
 
         if ( Direction.TOP == direction ) {
             return directionChosenTop( from, to );
@@ -127,21 +133,43 @@ public class MazeDFS implements MazeInterface {
      */
     private void removeWall( Way way ){
         Direction direction = way.directions.get( way.directions.size() - 1 );
-        matrix.getCellMatrix( way.x, way.y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
         if ( Direction.TOP == direction ) {
-            matrix.getCellMatrix( way.x, way.y + 1 ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
-        }
-        if ( Direction.RIGHT == direction ) {
-            matrix.getCellMatrix( way.x - 1, way.y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
-        }
-        if ( Direction.BOTTOM == direction ) {
             matrix.getCellMatrix( way.x, way.y - 1 ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
         }
-        if ( Direction.LEFT == direction ) {
+        if ( Direction.RIGHT == direction ) {
             matrix.getCellMatrix( way.x + 1, way.y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
+        }
+        if ( Direction.BOTTOM == direction ) {
+            matrix.getCellMatrix( way.x, way.y + 1 ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
+        }
+        if ( Direction.LEFT == direction ) {
+            matrix.getCellMatrix( way.x - 1, way.y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
         }
     }
 
+    /**
+     * Шаг в выбранном направлении
+     * @param from Начальная точка пути
+     */
+    private void step( Way from ) {
+        Way to = new Way();
+        int i = Direction.values().length - from.directions.size();
+        while ( i > 0 ){
+            i--;
+            if ( directionChosen( from, to ) ) {
+                to.directions.add( Direction.reverse( from.directions.get( from.directions.size() - 1 ) ) );
+                break;
+            }
+        }
+        if ( Direction.values().length > from.directions.size() ) {
+            nodes.add( from );
+        }
+        if ( ( to.x > 0 ) && ( to.y > 0 ) ) {
+            matrix.getCellMatrix( to.x, to.y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
+            removeWall( to );
+            step( to );
+        }
+    }
 
     /**
      * Матрица лабиринта
@@ -162,10 +190,10 @@ public class MazeDFS implements MazeInterface {
         if ( way.y < matrix.minY() ) {
             way.y = matrix.minY();
         }
+        //System.out.println( "WAY => " );
         matrix.getCellMatrix( way.x, way.y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
-        nodes.add( way );
 
-
+        step( way );
 
         return matrix;
     }
