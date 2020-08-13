@@ -16,6 +16,11 @@ public class MazeParameters {
     private int plateWidth;
 
     /**
+     * Дефолтное значение для типа ячейки матрицы
+     */
+    private TypeCellMatrix defaultPlateTypeCellMatrix;
+
+    /**
      * @return - Возвращает высоту матрицы лабиринта
      */
     public int getPlateHeight() {
@@ -31,6 +36,7 @@ public class MazeParameters {
         this.plateHeight = plateHeight;
         return this;
     }
+
     /**
      * @return - Возвращает ширину матрицы лабиринта
      */
@@ -45,6 +51,23 @@ public class MazeParameters {
      */
     public MazeParameters setPlateWidth( int plateWidth ) {
         this.plateWidth = plateWidth;
+        return this;
+    }
+
+    /**
+     * @return Возвращает дефолтное значение для типа ячейки матрицы
+     */
+    public TypeCellMatrix getDefaultPlateTypeCellMatrix() {
+        return defaultPlateTypeCellMatrix;
+    }
+
+    /**
+     * Устанавливает дефолтное значение для типа ячейки матрицы
+     * @param defaultPlateTypeCellMatrix Дефолтное значение
+     * @return Параметры лабиринта
+     */
+    public MazeParameters setDefaultPlateTypeCellMatrix( TypeCellMatrix defaultPlateTypeCellMatrix ) {
+        this.defaultPlateTypeCellMatrix = defaultPlateTypeCellMatrix;
         return this;
     }
 }
