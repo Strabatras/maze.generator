@@ -1,5 +1,8 @@
 package org.strabatras.maze.generator;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * RDA ( recursive-division-algorithm ) - метод рекурсивного деления
  */
@@ -9,6 +12,8 @@ public class MazeRDA implements MazeInterface {
 
     /** Матрица лабиринта */
     private Matrix matrix;
+
+    private final Queue< Polygon > polygons = new ConcurrentLinkedQueue<>();
 
     public MazeRDA( MazeParameters mazeParameters ) {
         this.mazeParameters = mazeParameters;
@@ -43,15 +48,91 @@ public class MazeRDA implements MazeInterface {
         return random;
     }
 
+    private Polygon polygonTopLeft( Polygon polygon ) {
+        Polygon out = new Polygon();
+        out.x1 = polygon.x1;
+        out.x2 = polygon.vertical - 1;
+        out.y1 = polygon.y1;
+        out.y2 = polygon.horizontal -1;
+        return out;
+    }
+
+    private Polygon polygonTopRight( Polygon polygon ) {
+        Polygon out = new Polygon();
+        out.x1 = polygon.vertical + 1;
+        out.x2 = polygon.x2;
+        out.y1 = polygon.y1;
+        out.y2 = polygon.horizontal - 1;
+        return out;
+    }
+
+    private Polygon polygonBottomLeft( Polygon polygon ) {
+        Polygon out = new Polygon();
+        out.x1 = polygon.x1;
+        out.x2 = polygon.vertical-1;
+        out.y1 = polygon.horizontal + 1;
+        out.y2 = polygon.y2;
+        return out;
+    }
+
+    private Polygon polygonBottomRight( Polygon polygon ) {
+        Polygon out = new Polygon();
+        out.x1 = polygon.vertical + 1;
+        out.x2 = polygon.x2;
+        out.y1 = polygon.horizontal + 1;
+        out.y2 = polygon.y2;
+        return out;
+    }
+
     private void division( Polygon polygon ){
 
-        if ( polygon.isDivisible() == false ) {
-            return;
-        }
+        //if ( polygon.isDivisible() == false ) {
+        //    return;
+        //}
         polygon.vertical = vertical( polygon );
         polygon.horizontal = horizontal( polygon );
-        System.out.println( "vertical => " + polygon.vertical + " horizontal => " + polygon.horizontal );
+        System.out.println( "V => " + polygon.vertical + " H => " + polygon.horizontal + " x1 => " + polygon.x1 + " x2 => " + polygon.x2 + " y1 => " + polygon.y1 + " y2 => " + polygon.y2 );
 
+        int y = 0;
+        for ( CellMatrix[] cells : matrix.get() ) {
+            int x = 0;
+            for ( CellMatrix cell : cells ){
+                /*
+                if ( ( x == polygon.vertical && y >= polygon.y1 )
+                  || ( y == polygon.horizontal && x >= polygon.y1 ) ) {
+                    matrix.getCellMatrix( x, y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.WALL );
+                }
+                 */
+                if ( x == polygon.x2 ){
+                    break;
+                }
+                x++;
+            }
+            if ( y == polygon.y2 ) {
+                break;
+            }
+            y++;
+        }
+
+        Polygon topRight = polygonTopRight( polygon );
+        if ( topRight.isDivisible() ) {
+            //polygons.add( topRight );
+        }
+        Polygon bottomLeft = polygonBottomLeft( polygon );
+        if ( bottomLeft.isDivisible() ) {
+            //polygons.add( bottomLeft );
+        }
+        Polygon bottomRight = polygonBottomRight( polygon );
+        if ( bottomRight.isDivisible() ) {
+            //polygons.add( bottomRight );
+        }
+        //Polygon topLeft = polygonTopLeft( polygon );
+        //if ( topLeft.isDivisible() ) {
+        //    division( polygonTopLeft( polygon ) );
+        //}
+        if ( bottomLeft.isDivisible() ) {
+            division( bottomLeft );
+        }
     }
 
     /**
@@ -72,7 +153,17 @@ public class MazeRDA implements MazeInterface {
 
         division( polygon );
 
+        System.out.println( "polygons.size() => " + polygons.size() );
 
+        int k = 0;
+        while ( !polygons.isEmpty() ) {
+            Polygon pl = polygons.poll();
+            if( null != pl ) {
+                division( pl );
+            }
+            k++;
+        }
+        System.out.println( "K => " + k );
         return matrix;
     }
 
