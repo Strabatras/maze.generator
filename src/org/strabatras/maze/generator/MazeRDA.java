@@ -15,8 +15,13 @@ public class MazeRDA implements MazeInterface {
     /** Матрица лабиринта */
     private Matrix matrix;
 
+    /** Непосещенные полигоны */
     private final Queue< Polygon > polygons = new ConcurrentLinkedQueue<>();
 
+    /**
+     * Конструктор
+     * @param mazeParameters Параметры лабиринта
+     */
     public MazeRDA( MazeParameters mazeParameters ) {
         this.mazeParameters = mazeParameters;
     }
@@ -28,6 +33,11 @@ public class MazeRDA implements MazeInterface {
         return this.mazeParameters;
     }
 
+    /**
+     * Координата по оси X для вертикального разбиения полигона
+     * @param polygon Полигон
+     * @return Координата по оси X
+     */
     private int vertical( Polygon polygon ) {
         int random = matrix.randomInteger( polygon.x1, polygon.x2 );
 /*
@@ -42,6 +52,11 @@ public class MazeRDA implements MazeInterface {
         return random;
     }
 
+    /**
+     * Координата по оси Y для горизонтального разбиения полигона
+     * @param polygon Полигон
+     * @return Координата по оси Y
+     */
     private int horizontal( Polygon polygon ) {
         int random = matrix.randomInteger( polygon.y1, polygon.y2 );
 /*
@@ -56,6 +71,11 @@ public class MazeRDA implements MazeInterface {
         return random;
     }
 
+    /**
+     * Создание полигона. Верхняя левая часть.
+     * @param polygon Делимый полигон
+     * @return Полигон
+     */
     private Polygon polygonTopLeft( Polygon polygon ) {
         Polygon out = new Polygon();
         out.x1 = polygon.x1;
@@ -65,6 +85,11 @@ public class MazeRDA implements MazeInterface {
         return out;
     }
 
+    /**
+     * Создание полигона. Верхняя правая часть.
+     * @param polygon Делимый полигон
+     * @return Полигон
+     */
     private Polygon polygonTopRight( Polygon polygon ) {
         Polygon out = new Polygon();
         out.x1 = polygon.vertical + 1;
@@ -74,6 +99,11 @@ public class MazeRDA implements MazeInterface {
         return out;
     }
 
+    /**
+     * Создание полигона. Нижняя левая часть.
+     * @param polygon Делимый полигон
+     * @return Полигон
+     */
     private Polygon polygonBottomLeft( Polygon polygon ) {
         Polygon out = new Polygon();
         out.x1 = polygon.x1;
@@ -83,6 +113,11 @@ public class MazeRDA implements MazeInterface {
         return out;
     }
 
+    /**
+     * Создание полигона. Нижняя правая часть.
+     * @param polygon Делимый полигон
+     * @return Полигон
+     */
     private Polygon polygonBottomRight( Polygon polygon ) {
         Polygon out = new Polygon();
         out.x1 = polygon.vertical + 1;
@@ -92,6 +127,11 @@ public class MazeRDA implements MazeInterface {
         return out;
     }
 
+    /**
+     * Точка на оси Y. Верхняя часть.
+     * @param polygon Полигон
+     * @return Точка на оси Y
+     */
     private int removeWallTop( Polygon polygon ){
         System.out.println( "TOP matrix.randomInteger( " + polygon.y1 + ", " + ( polygon.horizontal - 1 ) + "  )");
         int max = polygon.horizontal - 1;
@@ -108,6 +148,11 @@ public class MazeRDA implements MazeInterface {
         return y;
     }
 
+    /**
+     * Точка на оси X. Правая часть.
+     * @param polygon Полигон
+     * @return Точка на оси X.
+     */
     private int removeWallRight( Polygon polygon ){
         System.out.println( "RIGHT matrix.randomInteger( " + ( polygon.vertical + 1 ) + ", " + polygon.x2 + " )" );
         int min = polygon.vertical + 1;
@@ -124,6 +169,11 @@ public class MazeRDA implements MazeInterface {
         return x;
     }
 
+    /**
+     * Точка на оси Y. Нижняя часть.
+     * @param polygon Полигон
+     * @return Точка на оси Y
+     */
     private int removeWallBottom( Polygon polygon ){
         System.out.println( "BOTTOM matrix.randomInteger( " + ( polygon.horizontal + 1 ) + ", " + polygon.y2 + " )" );
         int min = polygon.horizontal + 1;
@@ -140,6 +190,11 @@ public class MazeRDA implements MazeInterface {
         return y;
     }
 
+    /**
+     * Точка на оси X. Левая часть.
+     * @param polygon Полигон
+     * @return Точка на оси X.
+     */
     private int removeWallLeft( Polygon polygon ){
         System.out.println( "LEFT matrix.randomInteger( " + polygon.x1 + ", " + ( polygon.vertical - 1 ) + " )" );
         int max = polygon.vertical - 1;
@@ -156,6 +211,10 @@ public class MazeRDA implements MazeInterface {
         return x;
     }
 
+    /**
+     * Убирает стену по точкам на осях разбиения полигона
+     * @param polygon Полигон
+     */
     private void removeWall( Polygon polygon ){
         int iterations = Direction.directions().length - 1;
         List< Direction > directions = new ArrayList<>( iterations );
@@ -197,6 +256,10 @@ public class MazeRDA implements MazeInterface {
         }
     }
 
+    /**
+     * Деление на полигоны
+     * @param polygon Делимый полигон
+     */
     private void division( Polygon polygon ){
 
         polygon.vertical = vertical( polygon );
@@ -277,10 +340,13 @@ public class MazeRDA implements MazeInterface {
                 thread.start();
             }
         }
-        while (group.activeCount() > 0 ){}
+        while ( group.activeCount() > 0 ){}
         return matrix;
     }
 
+    /**
+     * Полигон
+     */
     private class Polygon {
         /** Наименьшее значение по оси Y */
         public int y1;
