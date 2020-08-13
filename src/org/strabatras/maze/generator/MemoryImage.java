@@ -13,6 +13,11 @@ public class MemoryImage {
     private final int p = Color.white.getRGB();
     private final int b = Color.black.getRGB();
 
+    private final int top = Color.red.getRGB();
+    private final int right = Color.green.getRGB();
+    private final int bottom = Color.blue.getRGB();
+    private final int left = Color.orange.getRGB();
+
     private int[] imageData;
 
     private final Matrix matrix;
@@ -33,6 +38,14 @@ public class MemoryImage {
                         color = w;
                     } else if ( cell.getTypeCellMatrix() == TypeCellMatrix.PASSAGE ) {
                         color = p;
+                    } else if ( cell.getTypeCellMatrix() == TypeCellMatrix.TOP ) {
+                        color = top;
+                    } else if ( cell.getTypeCellMatrix() == TypeCellMatrix.RIGHT ) {
+                        color = right;
+                    } else if ( cell.getTypeCellMatrix() == TypeCellMatrix.BOTTOM ) {
+                        color = bottom;
+                    } else if ( cell.getTypeCellMatrix() == TypeCellMatrix.LEFT ) {
+                        color = left;
                     } else {
                         color = b;
                     }
@@ -67,7 +80,7 @@ public class MemoryImage {
                 imageSource.setAnimated( true );
                 Image image = Toolkit.getDefaultToolkit().createImage( imageSource );
                 //g.drawImage( image, 10, 30, matrix.maxX() * 3, matrix.maxY() * 3, null );
-                g.drawImage( image, 10, 30, matrix.maxX() * ( 3 * 10 ) / 2, matrix.maxY() * ( 3 * 10 ) / 2, null );
+                g.drawImage( image, 10, 30, matrix.maxX() * ( 3 * 4 ) / 2, matrix.maxY() * ( 3 * 4 ) / 2, null );
             }
         };
     }

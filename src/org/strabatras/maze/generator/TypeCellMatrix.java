@@ -9,5 +9,10 @@ public enum TypeCellMatrix {
     /** Коридор */
     PASSAGE,
     /** Граница */
-    BORDER
+    BORDER,
+
+    TOP,
+    RIGHT,
+    BOTTOM,
+    LEFT
 }

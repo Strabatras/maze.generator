@@ -1,5 +1,7 @@
 package org.strabatras.maze.generator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -27,10 +29,13 @@ public class MazeRDA implements MazeInterface {
     }
 
     private int vertical( Polygon polygon ) {
+        int random = matrix.randomInteger( polygon.x1, polygon.x2 );
+/*
         int random = Math.round( polygon.x2 * ( ( float )  matrix.randomInteger( 25, 85 ) / 100 ) );
-        if ( random == 0 ) {
+        if ( ( random == 0 ) || ( random < polygon.x1 ) || ( random > polygon.x2 ) ) {
             random = vertical( polygon );
         }
+*/
         if ( ( random % 2 ) == 1 ) {
             random = vertical( polygon );
         }
@@ -38,10 +43,13 @@ public class MazeRDA implements MazeInterface {
     }
 
     private int horizontal( Polygon polygon ) {
+        int random = matrix.randomInteger( polygon.y1, polygon.y2 );
+/*
         int random = Math.round( polygon.y2 * ( ( float )  matrix.randomInteger( 25, 85 ) / 100 ) );
-        if ( random == 0 ) {
+        if ( ( random == 0 ) || ( random < polygon.y1 ) || ( random > polygon.y2 ) ) {
             random = horizontal( polygon );
         }
+*/
         if ( ( random % 2 ) == 1 ) {
             random = horizontal( polygon );
         }
@@ -84,11 +92,113 @@ public class MazeRDA implements MazeInterface {
         return out;
     }
 
+    private int removeWallTop( Polygon polygon ){
+        System.out.println( "TOP matrix.randomInteger( " + polygon.y1 + ", " + ( polygon.horizontal - 1 ) + "  )");
+        int max = polygon.horizontal - 1;
+        if ( max < polygon.y1 ) {
+            return 0;
+        }
+        int y = matrix.randomInteger( polygon.y1, max );
+        if ( ( y % 2 ) == 0 ){
+            y++;
+            if ( y >= polygon.horizontal ) {
+                y = removeWallTop( polygon );
+            }
+        }
+        return y;
+    }
+
+    private int removeWallRight( Polygon polygon ){
+        System.out.println( "RIGHT matrix.randomInteger( " + ( polygon.vertical + 1 ) + ", " + polygon.x2 + " )" );
+        int min = polygon.vertical + 1;
+        if ( min > polygon.x2 ) {
+            return 0;
+        }
+        int x = matrix.randomInteger( min, polygon.x2 );
+        if ( ( x % 2 ) == 0 ) {
+            x++;
+            if ( x >= polygon.x2 ) {
+                x  = removeWallRight( polygon );
+            }
+        }
+        return x;
+    }
+
+    private int removeWallBottom( Polygon polygon ){
+        System.out.println( "BOTTOM matrix.randomInteger( " + ( polygon.horizontal + 1 ) + ", " + polygon.y2 + " )" );
+        int min = polygon.horizontal + 1;
+        if ( min > polygon.y2 ) {
+            return 0;
+        }
+        int y = matrix.randomInteger( min, polygon.y2 );
+        if ( ( y % 2 ) == 0 ) {
+            y++;
+            if ( y >= polygon.y2 ) {
+                y = removeWallBottom( polygon );
+            }
+        }
+        return y;
+    }
+
+    private int removeWallLeft( Polygon polygon ){
+        System.out.println( "LEFT matrix.randomInteger( " + polygon.x1 + ", " + ( polygon.vertical - 1 ) + " )" );
+        int max = polygon.vertical - 1;
+        if ( max < polygon.x1 ) {
+            return 0;
+        }
+        int x = matrix.randomInteger( polygon.x1, max );
+        if ( ( x % 2 ) == 0 ) {
+            x++;
+            if ( x >= polygon.vertical ){
+                x = removeWallLeft( polygon );
+            }
+        }
+        return x;
+    }
+
+    private void removeWall( Polygon polygon ){
+        int iterations = Direction.directions().length - 1;
+        List< Direction > directions = new ArrayList<>( iterations );
+
+        while ( iterations > 0) {
+            Direction direction = Direction.random( directions );
+            switch ( direction ){
+                case TOP -> {
+                    int y = removeWallTop( polygon );
+                    if ( y > 0 ) {
+                        matrix.getCellMatrix( polygon.vertical, y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
+                    }
+                    System.out.println( " => TOP X = " + polygon.vertical + ", Y = " + y + " |  x1 => " + polygon.x1 + " x2 => " + polygon.x2 + " y1 => " + polygon.y1 + " y2 => " + polygon.y2 );
+                }
+                case RIGHT -> {
+                    int x = removeWallRight( polygon );
+                    if ( x > 0 ) {
+                        matrix.getCellMatrix( x, polygon.horizontal ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
+                    }
+                    System.out.println( " => RIGHT X = " + x + " Y = " + polygon.horizontal + " |  x1 => " + polygon.x1 + " x2 => " + polygon.x2 + " y1 => " + polygon.y1 + " y2 => " + polygon.y2 );
+                }
+                case BOTTOM -> {
+                    int y = removeWallBottom( polygon );
+                    if ( y > 0 ) {
+                        matrix.getCellMatrix( polygon.vertical, y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
+                    }
+                    System.out.println( " => BOTTOM X = " + polygon.vertical + ", Y = " + y + " |  x1 => " + polygon.x1 + " x2 => " + polygon.x2 + " y1 => " + polygon.y1 + " y2 => " + polygon.y2 );
+                }
+                default -> {
+                    int x = removeWallLeft( polygon );
+                    if ( x > 0 ) {
+                        matrix.getCellMatrix( x, polygon.horizontal ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
+                    }
+                    System.out.println( " => LEFT X = " + x + " Y = " + polygon.horizontal + " |  x1 => " + polygon.x1 + " x2 => " + polygon.x2 + " y1 => " + polygon.y1 + " y2 => " + polygon.y2 );
+                }
+            }
+            directions.add( direction );
+            iterations--;
+        }
+    }
+
     private void division( Polygon polygon ){
 
-        //if ( polygon.isDivisible() == false ) {
-        //    return;
-        //}
         polygon.vertical = vertical( polygon );
         polygon.horizontal = horizontal( polygon );
         System.out.println( "V => " + polygon.vertical + " H => " + polygon.horizontal + " x1 => " + polygon.x1 + " x2 => " + polygon.x2 + " y1 => " + polygon.y1 + " y2 => " + polygon.y2 );
@@ -97,12 +207,13 @@ public class MazeRDA implements MazeInterface {
         for ( CellMatrix[] cells : matrix.get() ) {
             int x = 0;
             for ( CellMatrix cell : cells ){
-                /*
-                if ( ( x == polygon.vertical && y >= polygon.y1 )
-                  || ( y == polygon.horizontal && x >= polygon.y1 ) ) {
+
+                if( x == polygon.vertical && y >= polygon.y1 && y <= polygon.y2 ){
                     matrix.getCellMatrix( x, y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.WALL );
                 }
-                 */
+                if ( y == polygon.horizontal && x >= polygon.x1 && x <= polygon.x2 ){
+                    matrix.getCellMatrix( x, y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.WALL );
+                }
                 if ( x == polygon.x2 ){
                     break;
                 }
@@ -114,24 +225,23 @@ public class MazeRDA implements MazeInterface {
             y++;
         }
 
+        removeWall( polygon );
+
         Polygon topRight = polygonTopRight( polygon );
         if ( topRight.isDivisible() ) {
-            //polygons.add( topRight );
+            polygons.add( topRight );
         }
         Polygon bottomLeft = polygonBottomLeft( polygon );
         if ( bottomLeft.isDivisible() ) {
-            //polygons.add( bottomLeft );
+            polygons.add( bottomLeft );
         }
         Polygon bottomRight = polygonBottomRight( polygon );
         if ( bottomRight.isDivisible() ) {
-            //polygons.add( bottomRight );
+            polygons.add( bottomRight );
         }
-        //Polygon topLeft = polygonTopLeft( polygon );
-        //if ( topLeft.isDivisible() ) {
-        //    division( polygonTopLeft( polygon ) );
-        //}
-        if ( bottomLeft.isDivisible() ) {
-            division( bottomLeft );
+        Polygon topLeft = polygonTopLeft( polygon );
+        if ( topLeft.isDivisible() ) {
+            division( polygonTopLeft( polygon ) );
         }
     }
 
@@ -155,15 +265,19 @@ public class MazeRDA implements MazeInterface {
 
         System.out.println( "polygons.size() => " + polygons.size() );
 
-        int k = 0;
-        while ( !polygons.isEmpty() ) {
-            Polygon pl = polygons.poll();
-            if( null != pl ) {
-                division( pl );
+        final ThreadGroup group = new ThreadGroup("StackGroup" );
+        while( !polygons.isEmpty() ){
+            if ( group.activeCount() < 5 ) {
+                Thread thread = new Thread( group, ()-> {
+                    Polygon poll = polygons.poll();
+                    if( null != poll ) {
+                        division( poll );
+                    }
+                });
+                thread.start();
             }
-            k++;
         }
-        System.out.println( "K => " + k );
+        while (group.activeCount() > 0 ){}
         return matrix;
     }
 
