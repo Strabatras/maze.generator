@@ -26,7 +26,6 @@ public class MazeRDA implements MazeInterface {
         if ( random == 0 ) {
             random = vertical( polygon );
         }
-        //int random = matrix.randomInteger( polygon.x1, polygon.x2 );
         if ( ( random % 2 ) == 1 ) {
             random = vertical( polygon );
         }
@@ -38,11 +37,21 @@ public class MazeRDA implements MazeInterface {
         if ( random == 0 ) {
             random = horizontal( polygon );
         }
-        //int random = matrix.randomInteger( polygon.y1, polygon.y2 );
         if ( ( random % 2 ) == 1 ) {
             random = horizontal( polygon );
         }
         return random;
+    }
+
+    private void division( Polygon polygon ){
+
+        if ( polygon.isDivisible() == false ) {
+            return;
+        }
+        polygon.vertical = vertical( polygon );
+        polygon.horizontal = horizontal( polygon );
+        System.out.println( "vertical => " + polygon.vertical + " horizontal => " + polygon.horizontal );
+
     }
 
     /**
@@ -61,6 +70,9 @@ public class MazeRDA implements MazeInterface {
         polygon.y1 = matrix.minY();
         polygon.y2 = matrix.maxY();
 
+        division( polygon );
+
+
         return matrix;
     }
 
@@ -73,9 +85,22 @@ public class MazeRDA implements MazeInterface {
         public int x1;
         /** Наибольшее значение по оси X */
         public int x2;
-
+        /** Координата по оси X для вертикального разбиения полигона */
         public int vertical;
-
+        /** Координата по оси Y для горизонтального разбиения полигона */
         public int horizontal;
+
+        /**
+         * @return Возвращает признак возможности разделения на полигоны
+         */
+        public boolean isDivisible(){
+            if ( ( this.x2 - this.x1 ) < 2 ) {
+                return false;
+            }
+            if ( ( this.y2 - this.y1 ) < 2 ) {
+                return false;
+            }
+            return true;
+        }
     }
 }

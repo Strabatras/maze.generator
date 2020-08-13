@@ -31,7 +31,7 @@ public class Matrix {
      * @return Тип ячейки
      */
     private TypeCellMatrix typeCell( boolean isBorderedCell ){
-        return ( isBorderedCell ) ? ( TypeCellMatrix.BORDER ) : ( TypeCellMatrix.WALL );
+        return ( isBorderedCell ) ? ( TypeCellMatrix.BORDER ) : ( mazeParameters.getDefaultPlateTypeCellMatrix() );
     }
 
     /**
