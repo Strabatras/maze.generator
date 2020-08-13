@@ -1,5 +1,7 @@
 package org.strabatras.maze.generator;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * Матрица лабиринта
  */
@@ -72,7 +74,8 @@ public class Matrix {
      * @return число из диапазона
      */
     public int randomInteger( int min, int max ) {
-        return ( int )( Math.random() * ( max - min + 1 ) + min );
+        return ThreadLocalRandom.current().nextInt( min, max + 1 );
+        //return ( int )( Math.random() * ( max - min + 1 ) + min );
     }
 
     /**

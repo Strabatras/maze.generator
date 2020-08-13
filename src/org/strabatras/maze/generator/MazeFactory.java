@@ -27,6 +27,7 @@ public class MazeFactory {
      * @return Лабиринт
      */
     public MazeInterface maze(){
-        return new MazeDFS( this.mazeParameters() );
+        return new MazeRDA( this.mazeParameters() );
+        //return new MazeDFS( this.mazeParameters() );
     }
 }
