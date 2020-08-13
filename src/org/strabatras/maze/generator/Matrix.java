@@ -70,7 +70,7 @@ public class Matrix {
      * @param max Максимальное значение диапазона
      * @return число из диапазона
      */
-    private int randomInteger( int min, int max ) {
+    public int randomInteger( int min, int max ) {
         return ( int )( Math.random() * ( max - min + 1 ) + min );
     }
 
