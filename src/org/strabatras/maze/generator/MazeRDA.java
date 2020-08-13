@@ -133,7 +133,6 @@ public class MazeRDA implements MazeInterface {
      * @return Точка на оси Y
      */
     private int removeWallTop( Polygon polygon ){
-        System.out.println( "TOP matrix.randomInteger( " + polygon.y1 + ", " + ( polygon.horizontal - 1 ) + "  )");
         int max = polygon.horizontal - 1;
         if ( max < polygon.y1 ) {
             return 0;
@@ -154,7 +153,6 @@ public class MazeRDA implements MazeInterface {
      * @return Точка на оси X.
      */
     private int removeWallRight( Polygon polygon ){
-        System.out.println( "RIGHT matrix.randomInteger( " + ( polygon.vertical + 1 ) + ", " + polygon.x2 + " )" );
         int min = polygon.vertical + 1;
         if ( min > polygon.x2 ) {
             return 0;
@@ -175,7 +173,6 @@ public class MazeRDA implements MazeInterface {
      * @return Точка на оси Y
      */
     private int removeWallBottom( Polygon polygon ){
-        System.out.println( "BOTTOM matrix.randomInteger( " + ( polygon.horizontal + 1 ) + ", " + polygon.y2 + " )" );
         int min = polygon.horizontal + 1;
         if ( min > polygon.y2 ) {
             return 0;
@@ -196,7 +193,6 @@ public class MazeRDA implements MazeInterface {
      * @return Точка на оси X.
      */
     private int removeWallLeft( Polygon polygon ){
-        System.out.println( "LEFT matrix.randomInteger( " + polygon.x1 + ", " + ( polygon.vertical - 1 ) + " )" );
         int max = polygon.vertical - 1;
         if ( max < polygon.x1 ) {
             return 0;
@@ -227,28 +223,24 @@ public class MazeRDA implements MazeInterface {
                     if ( y > 0 ) {
                         matrix.getCellMatrix( polygon.vertical, y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
                     }
-                    System.out.println( " => TOP X = " + polygon.vertical + ", Y = " + y + " |  x1 => " + polygon.x1 + " x2 => " + polygon.x2 + " y1 => " + polygon.y1 + " y2 => " + polygon.y2 );
                 }
                 case RIGHT -> {
                     int x = removeWallRight( polygon );
                     if ( x > 0 ) {
                         matrix.getCellMatrix( x, polygon.horizontal ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
                     }
-                    System.out.println( " => RIGHT X = " + x + " Y = " + polygon.horizontal + " |  x1 => " + polygon.x1 + " x2 => " + polygon.x2 + " y1 => " + polygon.y1 + " y2 => " + polygon.y2 );
                 }
                 case BOTTOM -> {
                     int y = removeWallBottom( polygon );
                     if ( y > 0 ) {
                         matrix.getCellMatrix( polygon.vertical, y ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
                     }
-                    System.out.println( " => BOTTOM X = " + polygon.vertical + ", Y = " + y + " |  x1 => " + polygon.x1 + " x2 => " + polygon.x2 + " y1 => " + polygon.y1 + " y2 => " + polygon.y2 );
                 }
                 default -> {
                     int x = removeWallLeft( polygon );
                     if ( x > 0 ) {
                         matrix.getCellMatrix( x, polygon.horizontal ).setVisited( true ).setTypeCellMatrix( TypeCellMatrix.PASSAGE );
                     }
-                    System.out.println( " => LEFT X = " + x + " Y = " + polygon.horizontal + " |  x1 => " + polygon.x1 + " x2 => " + polygon.x2 + " y1 => " + polygon.y1 + " y2 => " + polygon.y2 );
                 }
             }
             directions.add( direction );
@@ -264,7 +256,6 @@ public class MazeRDA implements MazeInterface {
 
         polygon.vertical = vertical( polygon );
         polygon.horizontal = horizontal( polygon );
-        System.out.println( "V => " + polygon.vertical + " H => " + polygon.horizontal + " x1 => " + polygon.x1 + " x2 => " + polygon.x2 + " y1 => " + polygon.y1 + " y2 => " + polygon.y2 );
 
         int y = 0;
         for ( CellMatrix[] cells : matrix.get() ) {
@@ -315,9 +306,6 @@ public class MazeRDA implements MazeInterface {
     public Matrix matrix() {
         matrix = new Matrix( mazeParameters().setDefaultPlateTypeCellMatrix( TypeCellMatrix.PASSAGE ) );
 
-        System.out.println( "matrix.minX() => " + matrix.minX() + " | matrix.maxX() => " + matrix.maxX() );
-        System.out.println( "matrix.minY() => " + matrix.minY() + " | matrix.maxY() => " + matrix.maxY() );
-
         Polygon polygon = new Polygon();
         polygon.x1 = matrix.minX();
         polygon.x2 = matrix.maxX();
@@ -325,8 +313,6 @@ public class MazeRDA implements MazeInterface {
         polygon.y2 = matrix.maxY();
 
         division( polygon );
-
-        System.out.println( "polygons.size() => " + polygons.size() );
 
         final ThreadGroup group = new ThreadGroup("StackGroup" );
         while( !polygons.isEmpty() ){
