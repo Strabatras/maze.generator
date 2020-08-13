@@ -79,8 +79,8 @@ public class MemoryImage {
                 MemoryImageSource imageSource = new MemoryImageSource(  matrix.maxX() + 2, matrix.maxY() + 2, imageData(), 0, matrix.maxX() + 2 );
                 imageSource.setAnimated( true );
                 Image image = Toolkit.getDefaultToolkit().createImage( imageSource );
-                //g.drawImage( image, 10, 30, matrix.maxX() * 3, matrix.maxY() * 3, null );
-                g.drawImage( image, 10, 30, matrix.maxX() * ( 3 * 4 ) / 2, matrix.maxY() * ( 3 * 4 ) / 2, null );
+                g.drawImage( image, 10, 30, matrix.maxX() * 3, matrix.maxY() * 3, null );
+                //g.drawImage( image, 10, 30, matrix.maxX() * ( 3 * 4 ) / 2, matrix.maxY() * ( 3 * 4 ) / 2, null );
             }
         };
     }

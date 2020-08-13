@@ -7,8 +7,8 @@ public class Main {
 
         MazeFactory factory = new MazeFactory(
                 new MazeParameters()
-                        .setPlateWidth( 101 )
-                        .setPlateHeight( 101 )
+                        .setPlateWidth( 251 )
+                        .setPlateHeight( 251 )
         );
         Matrix matrix = factory.maze().matrix();
 

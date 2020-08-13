@@ -36,18 +36,22 @@ public class MazeRDA implements MazeInterface {
     /**
      * Координата по оси X для вертикального разбиения полигона
      * @param polygon Полигон
+     * @param attempt Номер текущей попытки рандомного подбора
      * @return Координата по оси X
      */
-    private int vertical( Polygon polygon ) {
-        int random = matrix.randomInteger( polygon.x1, polygon.x2 );
-/*
-        int random = Math.round( polygon.x2 * ( ( float )  matrix.randomInteger( 25, 85 ) / 100 ) );
-        if ( ( random == 0 ) || ( random < polygon.x1 ) || ( random > polygon.x2 ) ) {
-            random = vertical( polygon );
+    private int vertical( Polygon polygon, int attempt ) {
+        //int random = matrix.randomInteger( polygon.x1, polygon.x2 );
+        int random;
+        if ( attempt < 3 && ( ( polygon.x2 - polygon.x1 ) > 5 ) ) {
+            random = Math.round( ( polygon.x1 + ( polygon.x2 - polygon.x1 ) * ( ( float ) matrix.randomInteger( 40, 60 ) / 100 ) ) );
+            if ( ( random == 0 ) || ( random < polygon.x1 ) ) {
+                random = vertical( polygon, ++attempt );
+            }
+        } else {
+            random = matrix.randomInteger( polygon.x1, polygon.x2 );
         }
-*/
         if ( ( random % 2 ) == 1 ) {
-            random = vertical( polygon );
+            random = vertical( polygon, ++attempt );
         }
         return random;
     }
@@ -55,18 +59,22 @@ public class MazeRDA implements MazeInterface {
     /**
      * Координата по оси Y для горизонтального разбиения полигона
      * @param polygon Полигон
+     * @param attempt Номер текущей попытки рандомного подбора
      * @return Координата по оси Y
      */
-    private int horizontal( Polygon polygon ) {
-        int random = matrix.randomInteger( polygon.y1, polygon.y2 );
-/*
-        int random = Math.round( polygon.y2 * ( ( float )  matrix.randomInteger( 25, 85 ) / 100 ) );
-        if ( ( random == 0 ) || ( random < polygon.y1 ) || ( random > polygon.y2 ) ) {
-            random = horizontal( polygon );
+    private int horizontal( Polygon polygon, int attempt ) {
+        //int random = matrix.randomInteger( polygon.y1, polygon.y2 );
+        int random;
+        if ( attempt < 3 && ( ( polygon.y2 - polygon.y1 ) > 5 ) ) {
+            random = Math.round(polygon.y1 + ( polygon.y2 - polygon.y1 ) * ( ( float ) matrix.randomInteger( 40, 60 ) / 100 ) );
+            if ( ( random == 0 ) || ( random < polygon.y1 ) ) {
+                random = horizontal( polygon, ++attempt );
+            }
+        } else {
+            random = matrix.randomInteger( polygon.y1, polygon.y2 );
         }
-*/
         if ( ( random % 2 ) == 1 ) {
-            random = horizontal( polygon );
+            random = horizontal( polygon, ++attempt );
         }
         return random;
     }
@@ -254,8 +262,8 @@ public class MazeRDA implements MazeInterface {
      */
     private void division( Polygon polygon ){
 
-        polygon.vertical = vertical( polygon );
-        polygon.horizontal = horizontal( polygon );
+        polygon.vertical = vertical( polygon, 0 );
+        polygon.horizontal = horizontal( polygon, 0 );
 
         int y = 0;
         for ( CellMatrix[] cells : matrix.get() ) {
