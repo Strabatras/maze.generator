@@ -104,7 +104,7 @@ public class MazeDFS implements MazeInterface {
      * @return Результат выбора
      */
     private boolean directionChosen( Way from, Way to ){
-        Direction direction = Direction.randomDirection( from.directions );
+        Direction direction = Direction.random( from.directions );
         from.directions.add( direction );
 
         if ( Direction.TOP == direction ) {
@@ -171,7 +171,7 @@ public class MazeDFS implements MazeInterface {
      */
     @Override
     public Matrix matrix() {
-        matrix = new Matrix( mazeParameters() );
+        matrix = new Matrix( mazeParameters().setDefaultPlateTypeCellMatrix( TypeCellMatrix.WALL ) );
         CellMatrix cellMatrix = matrix.getRandomCellMatrix();
 
         Way way = new Way();
@@ -201,56 +201,6 @@ public class MazeDFS implements MazeInterface {
         }
         while (group.activeCount() > 0 ){}
         return matrix;
-    }
-
-    /**
-     * Направления для перемещения
-     */
-    private enum Direction {
-        TOP,
-        RIGHT,
-        BOTTOM,
-        LEFT;
-
-        /**
-         * Возвращает рандомное направление для перемещения
-         * @param exclude Список исключений из результата
-         * @return Направление
-         */
-        public static Direction randomDirection( List< Direction > exclude ) {
-            if ( null == exclude ) {
-                return values()[ ( int ) ( Math.random() * directions().length ) ];
-            }
-            List< Direction > values = Arrays.stream( directions() )
-                                             .filter( d -> !exclude.contains( d ) )
-                                             .collect( Collectors.toList() );
-            return values.get( ( int ) ( Math.random() * values.size() ) );
-        }
-
-        /**
-         * Инвертирует направление для перемещения
-         * @param direction Направление для перемещения
-         * @return Направление
-         */
-        public static Direction reverse( Direction direction ) {
-            if ( TOP == direction ){
-                return BOTTOM;
-            }
-            if ( RIGHT == direction ){
-                return LEFT;
-            }
-            if ( BOTTOM == direction ){
-                return  TOP;
-            }
-            return RIGHT;
-        }
-
-        /**
-         * @return Список направлений для перемещения
-         */
-        public static Direction[] directions() {
-            return values();
-        }
     }
 
     /**

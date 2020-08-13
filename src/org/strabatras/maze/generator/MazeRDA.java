@@ -3,7 +3,7 @@ package org.strabatras.maze.generator;
 /**
  * RDA ( recursive-division-algorithm ) - метод рекурсивного деления
  */
-public class MazeRDA {
+public class MazeRDA implements MazeInterface {
     /** Параметры лабиринта */
     private final MazeParameters mazeParameters;
 
