@@ -27,11 +27,12 @@ public class Matrix {
     }
 
     /**
+     * Расстановка границ и заливка ячеек матрицы
      * @param isBorderedCell Признак типа границы лабиринта
      * @return Тип ячейки
      */
     private TypeCellMatrix typeCell( boolean isBorderedCell ){
-        return ( isBorderedCell ) ? ( TypeCellMatrix.BORDER ) : ( TypeCellMatrix.WALL );
+        return ( isBorderedCell ) ? ( TypeCellMatrix.BORDER ) : ( mazeParameters.getDefaultPlateTypeCellMatrix() );
     }
 
     /**
